@@ -24,7 +24,7 @@ public class UserDaoService {
 
     public User save(User user){
         if(user.getId()==null){
-            user.setId(usercount++);
+            user.setId(++usercount);
         }
         users.add(user);
         return user;
