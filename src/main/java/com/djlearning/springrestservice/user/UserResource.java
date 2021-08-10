@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class UserResource {
@@ -31,7 +33,13 @@ public class UserResource {
      */
     @GetMapping("/users/{id}")
     public  User getUserById(@PathVariable int id){
-        return userDaoService.findOne(id);
+        Optional<User> user = userDaoService.findOne(id);
+        if(!user.isPresent()) {
+            throw new UserNotFoundException(id + " not found");
+        }else{
+            return user.get();
+        }
+
     }
 
     @PostMapping("/users")
