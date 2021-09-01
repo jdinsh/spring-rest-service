@@ -1,8 +1,10 @@
 package com.djlearning.springrestservice.exception;
 
 import com.djlearning.springrestservice.user.UserNotFoundException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,10 +24,19 @@ public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler {
         return  responseEntity;
     }
 
-    @ExceptionHandler({Exception.class})
+    @ExceptionHandler({UserNotFoundException.class})
     public  ResponseEntity<Object> handleUserNotFoundlException(UserNotFoundException userNotFoundException, WebRequest request) throws Exception {
         ExceptionResponse exceptionResponse = new  ExceptionResponse(new Date(),userNotFoundException.getMessage(), request.getDescription(false));
         ResponseEntity responseEntity = new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
         return  responseEntity;
     }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ExceptionResponse exceptionResponse = new  ExceptionResponse(new Date(),"VALIDATION FAILED",  ex.getBindingResult().toString());
+        ResponseEntity responseEntity = new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
+        return  responseEntity;
+
+    }
+
 }
